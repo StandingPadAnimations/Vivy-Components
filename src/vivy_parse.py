@@ -27,134 +27,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from dataclasses import dataclass
-from enum import Enum
-from typing import List, Optional, Dict, TextIO, TypedDict
+from typing import Dict, TextIO
 from pathlib import Path
 import json
 
-# All of these TypedDict classes
-# are used for function annotations
-# so that my IDE doesn't scream at me
-#
-# Sadly my IDE still screams at me for 
-# the use of deprecated annotations, as
-# we have to support 3.7
+from . import vivy_types as vt
 
-class VIVY_JSON_PASSES(TypedDict):
-    """
-    TypedDict representation of passes
-    in Vivy JSON
-    """
-    diffuse: str
-    specular: Optional[str]
-    normal: Optional[str]
-
-class VIVY_JSON_REFINE(TypedDict):
-    """
-    TypedDict representation of 
-    refinements in Vivy JSON
-    """
-    emissive   : Optional[str]
-    reflective : Optional[str] 
-    metallic   : Optional[str]
-    glass      : Optional[str]
-    fallback_n : Optional[str]
-    fallback_s : Optional[str]
-    fallback   : Optional[str]
-
-class VIVY_JSON_MATERIAL(TypedDict): 
-    """
-    TypedDict representation of 
-    materials in Vivy JSON
-    """
-    base_material : str
-    desc          : str
-    passes        : VIVY_JSON_PASSES
-    refinements   : VIVY_JSON_REFINE
-
-class VIVY_JSON_MAPPING(TypedDict):
-    """
-    TypedDict representation of
-    mappings in Vivy JSON
-    """
-    material: str 
-    refinement: str
-
-class VIVY_JSON_TOP_LEVEL (TypedDict):
-    """
-    TypedDict representation of all
-    items in the Vivy JSON
-    """
-    materials : Dict[str, VIVY_JSON_MATERIAL]
-    mapping   : Dict[str, List[VIVY_JSON_MAPPING]]
-
-
-class Fallback(Enum):
-    """
-    Fallback strings in Vivy
-    """
-    FALLBACK_S = "fallback_s"
-    FALLBACK_N = "fallback_n"
-    FALLBACK = "fallback"
-
-
-@dataclass
-class VivyPasses:
-    """
-    All passes a Vivy material 
-    can support. Each pass is a 
-    Node name in the actual material
-    """
-    diffuse: str
-    specular: Optional[str]
-    normal: Optional[str]
-
-
-@dataclass
-class VivyRefinements:
-    """
-    All refinements a Vivy material
-    can support. Each attribute can 
-    point to the material name that 
-    the refinement is based on
-    """
-    emissive: Optional[str]
-    reflective: Optional[str]
-    metallic: Optional[str]
-    glass: Optional[str]
-    fallback_n: Optional[str]
-    fallback_s: Optional[str]
-    fallback: Optional[str]
-
-
-@dataclass
-class VivyMaterial:
-    """
-    A full Vivy material.
-
-    Attributes:
-    -----------
-    base_material: str
-        The material that the Vivy entry
-        uses 
-
-    desc: str
-        Description of the Vivy material
-
-    passes: VivyPasses
-        All passes
-
-    refinements: Optional[VivyRefinements]
-        All refinements (if supported)
-    """
-    base_material: str
-    desc: str
-    passes: VivyPasses
-    refinements: Optional[VivyRefinements]
-
-
-def dict_to_vivy(raw_dict: VIVY_JSON_TOP_LEVEL) -> Dict[str, VivyMaterial]:
+def dict_to_vivy(raw_dict: vt.VIVY_JSON_TOP_LEVEL) -> Dict[str, vt.VivyMaterial]:
     """
     Converts a raw dictionary into a dictionary mapping
     names to a VivyMaterial dataclass
@@ -164,13 +43,13 @@ def dict_to_vivy(raw_dict: VIVY_JSON_TOP_LEVEL) -> Dict[str, VivyMaterial]:
 
     Returns: Dict[str, VivyMaterial]
     """
-    final_dict: Dict[str, VivyMaterial] = {}
+    final_dict: Dict[str, vt.VivyMaterial] = {}
     for key in raw_dict["materials"]:
         md = raw_dict["materials"][key]
-        final_dict[key] = VivyMaterial(
+        final_dict[key] = vt.VivyMaterial(
             base_material=md["base_material"],
             desc=md["desc"],
-            passes=VivyPasses(
+            passes=vt.VivyPasses(
                 diffuse=md["passes"]["diffuse"],
                 specular=(
                     md["passes"]["specular"] if "specular" in md["passes"] else None
@@ -180,7 +59,7 @@ def dict_to_vivy(raw_dict: VIVY_JSON_TOP_LEVEL) -> Dict[str, VivyMaterial]:
             refinements=(
                 None
                 if "refinements" not in md
-                else VivyRefinements(
+                else vt.VivyRefinements(
                     emissive=(
                         md["refinements"]["emissive"]
                         if "emissive" in md["refinements"]
@@ -222,7 +101,7 @@ def dict_to_vivy(raw_dict: VIVY_JSON_TOP_LEVEL) -> Dict[str, VivyMaterial]:
     return final_dict
 
 
-def read_vivy_json(f: TextIO) -> Dict[str, VivyMaterial]:
+def read_vivy_json(f: TextIO) -> Dict[str, vt.VivyMaterial]:
     """
     Reads a file object and parses the contents
 
@@ -232,11 +111,11 @@ def read_vivy_json(f: TextIO) -> Dict[str, VivyMaterial]:
 
     Returns: Dict[str, VivyMaterial]
     """
-    data: VIVY_JSON_TOP_LEVEL = json.load(f)
+    data: vt.VIVY_JSON_TOP_LEVEL = json.load(f)
     return dict_to_vivy(data)
 
 
-def get_vivy_data(file: Path) -> Dict[str, VivyMaterial]:
+def get_vivy_data(file: Path) -> Dict[str, vt.VivyMaterial]:
     """
     Opens a file at the specified path and parses the contents
 

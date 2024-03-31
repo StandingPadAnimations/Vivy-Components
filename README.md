@@ -1,8 +1,5 @@
 These components are cleaned up versions of the material system in [Vivy](https://github.com/StandingPadAnimations/Vivy), made independent of Blender.
 
-Components:
-- `vivy_parse.py`: Parses JSON files in the Vivy format and converts them to Python dataclasses
-
 All components are released under the BSD 3-Clause license
 
 ```
