@@ -1,21 +1,21 @@
 # BSD 3-Clause License
-# 
+#
 # Copyright (c) 2024, Mahid Sheikh
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # 1. Redistributions of source code must retain the above copyright notice, this
 #    list of conditions and the following disclaimer.
-# 
+#
 # 2. Redistributions in binary form must reproduce the above copyright notice,
 #    this list of conditions and the following disclaimer in the documentation
 #    and/or other materials provided with the distribution.
-# 
+#
 # 3. Neither the name of the copyright holder nor the names of its
 #    contributors may be used to endorse or promote products derived from
 #    this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -37,9 +37,10 @@ from typing import Optional, TypedDict
 # are used for function annotations
 # so that my IDE doesn't scream at me
 #
-# Sadly my IDE still screams at me for 
+# Sadly my IDE still screams at me for
 # the use of deprecated annotations, as
 # we have to support 3.7
+
 
 class VIVY_JSON_PASSES(TypedDict):
     """TypedDict representation of passes
@@ -54,22 +55,24 @@ class VIVY_JSON_PASSES(TypedDict):
     }
     ```
 
-    specular and normal are not required, hence why 
+    specular and normal are not required, hence why
     they're made Optional.
     """
-    diffuse  : str
-    specular : Optional[str]
-    normal   : Optional[str]
+
+    diffuse: str
+    specular: Optional[str]
+    normal: Optional[str]
+
 
 class VIVY_JSON_REFINE(TypedDict):
-    """TypedDict representation of 
+    """TypedDict representation of
     refinements in Vivy JSON.
 
     This maps to the following JSON structure:
     ```json
     {
         "emissive"   : "Some Material Fallback",
-        "reflective" : "Some Material Fallback", 
+        "reflective" : "Some Material Fallback",
         "metallic"   : "Some Material Fallback",
         "glass"      : "Some Material Fallback",
         "fallback_n" : "Some Material Fallback",
@@ -81,16 +84,18 @@ class VIVY_JSON_REFINE(TypedDict):
     None of these are required, so this may contain
     all Nonetypes.
     """
-    emissive   : Optional[str]
-    reflective : Optional[str] 
-    metallic   : Optional[str]
-    glass      : Optional[str]
-    fallback_n : Optional[str]
-    fallback_s : Optional[str]
-    fallback   : Optional[str]
 
-class VIVY_JSON_MATERIAL(TypedDict): 
-    """TypedDict representation of 
+    emissive: Optional[str]
+    reflective: Optional[str]
+    metallic: Optional[str]
+    glass: Optional[str]
+    fallback_n: Optional[str]
+    fallback_s: Optional[str]
+    fallback: Optional[str]
+
+
+class VIVY_JSON_MATERIAL(TypedDict):
+    """TypedDict representation of
     materials in Vivy JSON.
 
     This maps to the following JSON structure:
@@ -103,10 +108,12 @@ class VIVY_JSON_MATERIAL(TypedDict):
     }
     ```
     """
-    base_material : str
-    desc          : str
-    passes        : VIVY_JSON_PASSES
-    refinements   : VIVY_JSON_REFINE
+
+    base_material: str
+    desc: str
+    passes: VIVY_JSON_PASSES
+    refinements: VIVY_JSON_REFINE
+
 
 class VIVY_JSON_MAPPING(TypedDict):
     """TypedDict representation of
@@ -123,10 +130,12 @@ class VIVY_JSON_MAPPING(TypedDict):
     refinement is not required, hence why
     it's optional.
     """
-    material: str 
+
+    material: str
     refinement: Optional[str]
 
-class VIVY_JSON_TOP_LEVEL (TypedDict):
+
+class VIVY_JSON_TOP_LEVEL(TypedDict):
     """TypedDict representation of all
     items in the Vivy JSON.
 
@@ -144,14 +153,16 @@ class VIVY_JSON_TOP_LEVEL (TypedDict):
     }
     ```
     """
-    materials : dict[str, VIVY_JSON_MATERIAL]
-    mapping   : dict[str, list[VIVY_JSON_MAPPING]]
+
+    materials: dict[str, VIVY_JSON_MATERIAL]
+    mapping: dict[str, list[VIVY_JSON_MAPPING]]
 
 
 class Fallback(Enum):
     """
     Fallback strings in Vivy
     """
+
     FALLBACK_S = "fallback_s"
     FALLBACK_N = "fallback_n"
     FALLBACK = "fallback"
@@ -159,10 +170,11 @@ class Fallback(Enum):
 
 @dataclass
 class VivyPasses:
-    """All passes a Vivy material 
-    can support. Each pass is a 
+    """All passes a Vivy material
+    can support. Each pass is a
     Node name in the actual material
     """
+
     diffuse: str
     specular: Optional[str]
     normal: Optional[str]
@@ -171,10 +183,11 @@ class VivyPasses:
 @dataclass
 class VivyRefinements:
     """All refinements a Vivy material
-    can support. Each attribute can 
-    point to the material name that 
+    can support. Each attribute can
+    point to the material name that
     the refinement is based on
     """
+
     emissive: Optional[str]
     reflective: Optional[str]
     metallic: Optional[str]
@@ -192,7 +205,7 @@ class VivyMaterial:
     -----------
     base_material: str
         The material that the Vivy entry
-        uses 
+        uses
 
     desc: str
         Description of the Vivy material
@@ -203,12 +216,14 @@ class VivyMaterial:
     refinements: Optional[VivyRefinements]
         All refinements (if supported)
     """
+
     base_material: str
     desc: str
     passes: VivyPasses
     refinements: Optional[VivyRefinements]
 
-@dataclass 
+
+@dataclass
 class VivyMapping:
     """
     A mapping to a material and its relationship
@@ -221,8 +236,10 @@ class VivyMapping:
     refinement: Optional[str]
         The type of refinement
     """
-    material: str 
+
+    material: str
     refinement: Optional[str]
+
 
 @dataclass
 class VivyData:

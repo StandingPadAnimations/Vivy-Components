@@ -1,21 +1,21 @@
 # BSD 3-Clause License
-# 
+#
 # Copyright (c) 2024, Mahid Sheikh
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # 1. Redistributions of source code must retain the above copyright notice, this
 #    list of conditions and the following disclaimer.
-# 
+#
 # 2. Redistributions in binary form must reproduce the above copyright notice,
 #    this list of conditions and the following disclaimer in the documentation
 #    and/or other materials provided with the distribution.
-# 
+#
 # 3. Neither the name of the copyright holder nor the names of its
 #    contributors may be used to endorse or promote products derived from
 #    this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -33,7 +33,10 @@ import json
 
 from . import vivy_types as vt
 
-def read_vivy_materials(vivy_materials_dict: dict[str, vt.VIVY_JSON_MATERIAL]) -> dict[str, vt.VivyMaterial]:
+
+def read_vivy_materials(
+    vivy_materials_dict: dict[str, vt.VIVY_JSON_MATERIAL],
+) -> dict[str, vt.VivyMaterial]:
     """Reads the "materials" portion of the Vivy JSON.
 
     vivy_materials_dict: dict[str, vt.VIVY_JSON_MATERIAL]
@@ -96,27 +99,33 @@ def read_vivy_materials(vivy_materials_dict: dict[str, vt.VIVY_JSON_MATERIAL]) -
                 )
             ),
         )
-    
+
     return final_dict
 
-def read_vivy_mappings(vivy_mappings_dict: dict[str, list[vt.VIVY_JSON_MAPPING]]) -> dict[str, list[vt.VivyMapping]]:
+
+def read_vivy_mappings(
+    vivy_mappings_dict: dict[str, list[vt.VIVY_JSON_MAPPING]],
+) -> dict[str, list[vt.VivyMapping]]:
     """Reads the "mappings" portion of the Vivy JSON.
 
     vivy_mappings_dict: dict[str, list[vt.VIVY_JSON_MAPPING]]
         The mapping portion of the Vivy JSON.
 
-    Returns: dict[str, list[vt.VivyMapping]] 
+    Returns: dict[str, list[vt.VivyMapping]]
     """
     final_dict: dict[str, list[vt.VivyMapping]] = {}
     for mat in vivy_mappings_dict:
         maps = vivy_mappings_dict[mat]
         final_dict[mat] = []
         for m in maps:
-            final_dict[mat].append(vt.VivyMapping(
-                                   material=m["material"],
-                                   refinement=m["refinement"] if "refinement" in m else None 
-                            ))
+            final_dict[mat].append(
+                vt.VivyMapping(
+                    material=m["material"],
+                    refinement=m["refinement"] if "refinement" in m else None,
+                )
+            )
     return final_dict
+
 
 def dict_to_vivy_data(raw_dict: vt.VIVY_JSON_TOP_LEVEL) -> vt.VivyData:
     """Converts a raw dictionary into a dictionary mapping
@@ -127,11 +136,12 @@ def dict_to_vivy_data(raw_dict: vt.VIVY_JSON_TOP_LEVEL) -> vt.VivyData:
 
     Returns: dict[str, VivyMaterial]
     """
-    
+
     return vt.VivyData(
-            materials=read_vivy_materials(raw_dict["materials"]),
-            mapping=read_vivy_mappings(raw_dict["mapping"])
+        materials=read_vivy_materials(raw_dict["materials"]),
+        mapping=read_vivy_mappings(raw_dict["mapping"]),
     )
+
 
 def read_vivy_json(f: TextIO) -> vt.VivyData:
     """Reads a file object and parses the contents.
