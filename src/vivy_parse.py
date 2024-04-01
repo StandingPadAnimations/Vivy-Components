@@ -27,25 +27,23 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from typing import Dict, TextIO
+from typing import TextIO
 from pathlib import Path
 import json
 
 from . import vivy_types as vt
 
-def dict_to_vivy(raw_dict: vt.VIVY_JSON_TOP_LEVEL) -> Dict[str, vt.VivyMaterial]:
-    """
-    Converts a raw dictionary into a dictionary mapping
-    names to a VivyMaterial dataclass
+def read_vivy_materials(vivy_materials_dict: dict[str, vt.VIVY_JSON_MATERIAL]) -> dict[str, vt.VivyMaterial]:
+    """Reads the "materials" portion of the Vivy JSON.
 
-    raw_dict: VIVY_JSON_TOP_LEVEL
-        The raw dictionary from the Vivy JSON
+    vivy_materials_dict: dict[str, vt.VIVY_JSON_MATERIAL]
+        The materials portion of the Vivy JSON.
 
-    Returns: Dict[str, VivyMaterial]
+    Returns:  dict[str, vt.VivyMaterial]
     """
-    final_dict: Dict[str, vt.VivyMaterial] = {}
-    for key in raw_dict["materials"]:
-        md = raw_dict["materials"][key]
+    final_dict: dict[str, vt.VivyMaterial] = {}
+    for key in vivy_materials_dict:
+        md = vivy_materials_dict[key]
         final_dict[key] = vt.VivyMaterial(
             base_material=md["base_material"],
             desc=md["desc"],
@@ -98,31 +96,63 @@ def dict_to_vivy(raw_dict: vt.VIVY_JSON_TOP_LEVEL) -> Dict[str, vt.VivyMaterial]
                 )
             ),
         )
+    
     return final_dict
 
+def read_vivy_mappings(vivy_mappings_dict: dict[str, list[vt.VIVY_JSON_MAPPING]]) -> dict[str, list[vt.VivyMapping]]:
+    """Reads the "mappings" portion of the Vivy JSON.
 
-def read_vivy_json(f: TextIO) -> Dict[str, vt.VivyMaterial]:
+    vivy_mappings_dict: dict[str, list[vt.VIVY_JSON_MAPPING]]
+        The mapping portion of the Vivy JSON.
+
+    Returns: dict[str, list[vt.VivyMapping]] 
     """
-    Reads a file object and parses the contents
+    final_dict: dict[str, list[vt.VivyMapping]] = {}
+    for mat in vivy_mappings_dict:
+        maps = vivy_mappings_dict[mat]
+        final_dict[mat] = []
+        for m in maps:
+            final_dict[mat].append(vt.VivyMapping(
+                                   material=m["material"],
+                                   refinement=m["refinement"] if "refinement" in m else None 
+                            ))
+    return final_dict
+
+def dict_to_vivy_data(raw_dict: vt.VIVY_JSON_TOP_LEVEL) -> vt.VivyData:
+    """Converts a raw dictionary into a dictionary mapping
+    names to a VivyMaterial dataclass.
+
+    raw_dict: VIVY_JSON_TOP_LEVEL
+        The raw dictionary from the Vivy JSON.
+
+    Returns: dict[str, VivyMaterial]
+    """
+    
+    return vt.VivyData(
+            materials=read_vivy_materials(raw_dict["materials"]),
+            mapping=read_vivy_mappings(raw_dict["mapping"])
+    )
+
+def read_vivy_json(f: TextIO) -> vt.VivyData:
+    """Reads a file object and parses the contents.
 
     f: TextIO
         The file object to load JSON
-        data from
+        data from.
 
-    Returns: Dict[str, VivyMaterial]
+    Returns: dict[str, VivyMaterial]
     """
     data: vt.VIVY_JSON_TOP_LEVEL = json.load(f)
-    return dict_to_vivy(data)
+    return dict_to_vivy_data(data)
 
 
-def get_vivy_data(file: Path) -> Dict[str, vt.VivyMaterial]:
-    """
-    Opens a file at the specified path and parses the contents
+def get_vivy_data(file: Path) -> vt.VivyData:
+    """Opens a file at the specified path and parses the contents.
 
     file: Path
-        The filepath of the file to parse
+        The filepath of the file to parse.
 
-    Returns: Dict[str, VivyMaterial]
+    Returns: dict[str, VivyMaterial]
     """
     with open(file, "r") as f:
         return read_vivy_json(f)
