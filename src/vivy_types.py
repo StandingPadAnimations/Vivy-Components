@@ -258,3 +258,24 @@ class VivyData:
 
     materials: dict[str, VivyMaterial]
     mapping: dict[str, list[VivyMapping]]
+
+    def base_to_vivy(self, name: str) -> Optional[VivyMaterial]:
+        """Takes a base material name and retrieves the VivyMaterial 
+        associated with the base material.
+
+        This is done by iterating through self.mapping[name] and finding the 
+        entry with just the base material and no refinements.
+
+        name: str
+            The base material name. The base material refers to the material's
+            name in 3D software, which is distinct from the Vivy material name
+
+        Returns:
+            VivyMaterial if name is mapped to a material, None otherwise
+        """
+
+        mapping_list = self.mapping[name]
+        for m in mapping_list:
+            if m.refinement is None:
+                return self.materials[m.material]
+        return None 
