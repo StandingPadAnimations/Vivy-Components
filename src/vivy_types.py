@@ -31,7 +31,7 @@
 
 from dataclasses import dataclass, fields
 from enum import Enum
-from typing import Optional, TypedDict, cast
+from typing import Optional, TypedDict, cast, NotRequired
 
 # All of these TypedDict classes
 # are used for function annotations
@@ -55,13 +55,12 @@ class VIVY_JSON_PASSES(TypedDict):
     }
     ```
 
-    specular and normal are not required, hence why
-    they're made Optional.
+    specular and normal are not required in the JSON structure
     """
 
     diffuse: str
-    specular: Optional[str]
-    normal: Optional[str]
+    specular: NotRequired[str]
+    normal: NotRequired[str]
 
 
 class VIVY_JSON_REFINE(TypedDict):
@@ -81,17 +80,16 @@ class VIVY_JSON_REFINE(TypedDict):
     }
     ```
 
-    None of these are required, so this may contain
-    all Nonetypes.
+    None of these are required in the JSON structure
     """
 
-    emissive: Optional[str]
-    reflective: Optional[str]
-    metallic: Optional[str]
-    glass: Optional[str]
-    fallback_n: Optional[str]
-    fallback_s: Optional[str]
-    fallback: Optional[str]
+    emissive: NotRequired[str]
+    reflective: NotRequired[str]
+    metallic: NotRequired[str]
+    glass: NotRequired[str]
+    fallback_n: NotRequired[str]
+    fallback_s: NotRequired[str]
+    fallback: NotRequired[str]
 
 
 class VIVY_JSON_MATERIAL(TypedDict):
@@ -127,12 +125,11 @@ class VIVY_JSON_MAPPING(TypedDict):
     }
     ```
 
-    refinement is not required, hence why
-    it's optional.
+    refinement is not required in the JSON structure
     """
 
     material: str
-    refinement: Optional[str]
+    refinement: NotRequired[str]
 
 
 class VIVY_JSON_TOP_LEVEL(TypedDict):
@@ -189,7 +186,14 @@ class VivyPasses:
 
         Returns: VIVY_JSON_PASSES
         """
-        return cast(VIVY_JSON_PASSES, {f.name: getattr(self, f.name) for f in fields(self) if getattr(self, f.name) is not None})
+        return cast(
+            VIVY_JSON_PASSES,
+            {
+                f.name: getattr(self, f.name)
+                for f in fields(self)
+                if getattr(self, f.name) is not None
+            },
+        )
 
 
 @dataclass
@@ -218,7 +222,14 @@ class VivyRefinements:
 
         Returns: VIVY_JSON_REFINE
         """
-        return cast(VIVY_JSON_REFINE, {f.name: getattr(self, f.name) for f in fields(self) if getattr(self, f.name) is not None})
+        return cast(
+            VIVY_JSON_REFINE,
+            {
+                f.name: getattr(self, f.name)
+                for f in fields(self)
+                if getattr(self, f.name) is not None
+            },
+        )
 
 
 @dataclass
@@ -257,15 +268,19 @@ class VivyMaterial:
         Returns: VIVY_JSON_MATERIAL
         """
 
-        # To satisfy static analysis, we pretend the dictionary 
-        data: VIVY_JSON_MATERIAL = cast(VIVY_JSON_MATERIAL, {
-            "base_material" : self.base_material,
-            "desc" : self.desc,
-            "passes" : self.passes.dump_json()
-        })
+        # To satisfy static analysis, we pretend the dictionary
+        data: VIVY_JSON_MATERIAL = cast(
+            VIVY_JSON_MATERIAL,
+            {
+                "base_material": self.base_material,
+                "desc": self.desc,
+                "passes": self.passes.dump_json(),
+            },
+        )
         if self.refinements is not None:
             data["refinements"] = self.refinements.dump_json()
         return data
+
 
 @dataclass
 class VivyMapping:
@@ -294,7 +309,14 @@ class VivyMapping:
 
         Returns: VIVY_JSON_PASSES
         """
-        return cast(VIVY_JSON_MAPPING, {f.name: getattr(self, f.name) for f in fields(self) if getattr(self, f.name) is not None})
+        return cast(
+            VIVY_JSON_MAPPING,
+            {
+                f.name: getattr(self, f.name)
+                for f in fields(self)
+                if getattr(self, f.name) is not None
+            },
+        )
 
 
 @dataclass
@@ -320,10 +342,7 @@ class VivyData:
 
         Returns: VIVY_JSON_TOP_LEVEL
         """
-        data: VIVY_JSON_TOP_LEVEL = {
-            "materials" : {},
-            "mapping": {}
-        }
+        data: VIVY_JSON_TOP_LEVEL = {"materials": {}, "mapping": {}}
 
         for mat in self.materials:
             data["materials"][mat] = self.materials[mat].dump_json()
@@ -332,7 +351,6 @@ class VivyData:
             data["mapping"][map] = [item.dump_json() for item in self.mapping[map]]
 
         return data
-       
 
     def base_to_vivy(self, name: str) -> Optional[VivyMaterial]:
         """Takes a base material name and retrieves the VivyMaterial
