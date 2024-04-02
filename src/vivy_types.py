@@ -46,7 +46,7 @@ denoted in CamelCase, starting with Vivy.
 """
 
 from dataclasses import dataclass, fields
-from typing import Optional, TypedDict, cast, NotRequired
+from typing import Optional, TypedDict, cast
 
 # All of these TypedDict classes
 # are used for function annotations
@@ -70,12 +70,13 @@ class VIVY_JSON_PASSES(TypedDict):
     }
     ```
 
-    specular and normal are not required in the JSON structure
+    specular and normal are not required, hence why
+    they're made Optional.
     """
 
     diffuse: str
-    specular: NotRequired[str]
-    normal: NotRequired[str]
+    specular: Optional[str]
+    normal: Optional[str]
 
 
 class VIVY_JSON_REFINE(TypedDict):
@@ -95,16 +96,17 @@ class VIVY_JSON_REFINE(TypedDict):
     }
     ```
 
-    None of these are required in the JSON structure
+    None of these are required, so this may contain
+    all Nonetypes.
     """
 
-    emissive: NotRequired[str]
-    reflective: NotRequired[str]
-    metallic: NotRequired[str]
-    glass: NotRequired[str]
-    fallback_n: NotRequired[str]
-    fallback_s: NotRequired[str]
-    fallback: NotRequired[str]
+    emissive: Optional[str]
+    reflective: Optional[str]
+    metallic: Optional[str]
+    glass: Optional[str]
+    fallback_n: Optional[str]
+    fallback_s: Optional[str]
+    fallback: Optional[str]
 
 
 class VIVY_JSON_MATERIAL(TypedDict):
@@ -140,11 +142,12 @@ class VIVY_JSON_MAPPING(TypedDict):
     }
     ```
 
-    refinement is not required in the JSON structure
+    refinement is not required, hence why
+    it's optional.
     """
 
     material: str
-    refinement: NotRequired[str]
+    refinement: Optional[str]
 
 
 class VIVY_JSON_TOP_LEVEL(TypedDict):
