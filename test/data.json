@@ -1,0 +1,46 @@
+{
+  "materials": {
+    "PBR": {
+      "base_material": "PBR",
+      "desc": "PBR material",
+      "passes": {
+        "diffuse": "Diffuse",
+        "normal": "Normal",
+        "specular": "Specular"
+      },
+      "refinements": {
+        "emissive": "BPR_Emit",
+        "fallback": "Simple"
+      }
+    },
+    "Simple": {
+      "base_material": "Simple",
+      "desc": "Simple Material",
+      "passes": {
+        "diffuse": "Diffuse"
+      }
+    }
+  },
+  "mapping": {
+    "PBR": [
+      {
+        "material": "PBR"
+      }
+    ],
+    "Simple": [
+      {
+        "material": "Simple"
+      },
+      {
+        "material": "PBR",
+        "refinement": "fallback"
+      }
+    ],
+    "BPR_Emit": [
+      {
+        "material": "PBR",
+        "refinement": "emissive"
+      }
+    ]
+  }
+}
