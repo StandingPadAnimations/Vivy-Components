@@ -140,7 +140,7 @@ def dict_to_vivy_data(raw_dict: vt.VIVY_JSON_TOP_LEVEL) -> vt.VivyData:
     raw_dict: VIVY_JSON_TOP_LEVEL
         The raw dictionary from the Vivy JSON.
 
-    Returns: dict[str, VivyMaterial]
+    Returns: VivyData
     """
 
     return vt.VivyData(
@@ -157,7 +157,7 @@ def load_vivy_json(f: TextIO) -> Optional[vt.VivyData]:
         data from.
 
     Returns:
-        dict[str, VivyMaterial] if the data is parsed, None otherwise
+        VivyData if the data is parsed, None otherwise
     """
     try:
         data: vt.VIVY_JSON_TOP_LEVEL = json.load(f)
@@ -173,7 +173,7 @@ def open_vivy_json(file: Path) -> Optional[vt.VivyData]:
         The filepath of the file to parse.
 
     Returns:
-        dict[str, VivyMaterial] if the file exists, None otherwise
+        VivyData if the file exists, None otherwise
     """
     if not file.exists():
         return None
