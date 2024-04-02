@@ -29,7 +29,7 @@
 
 """Parsing methods to parse Vivy's JSON structure to proper Python objects"""
 
-from typing import TextIO
+from typing import Optional, TextIO
 from pathlib import Path
 import json
 
@@ -145,26 +145,35 @@ def dict_to_vivy_data(raw_dict: vt.VIVY_JSON_TOP_LEVEL) -> vt.VivyData:
     )
 
 
-def read_vivy_json(f: TextIO) -> vt.VivyData:
+def read_vivy_json(f: TextIO) -> Optional[vt.VivyData]:
     """Reads a file object and parses the contents.
 
     f: TextIO
         The file object to load JSON
         data from.
 
-    Returns: dict[str, VivyMaterial]
+    Returns:
+        dict[str, VivyMaterial] if the data is parsed, None otherwise
     """
-    data: vt.VIVY_JSON_TOP_LEVEL = json.load(f)
-    return dict_to_vivy_data(data)
+    try:
+        data: vt.VIVY_JSON_TOP_LEVEL = json.load(f)
+        return dict_to_vivy_data(data)
+    except Exception:
+        return None
 
 
-def get_vivy_data(file: Path) -> vt.VivyData:
+def get_vivy_data(file: Path) -> Optional[vt.VivyData]:
     """Opens a file at the specified path and parses the contents.
 
     file: Path
         The filepath of the file to parse.
 
-    Returns: dict[str, VivyMaterial]
+    Returns:
+        dict[str, VivyMaterial] if the file exists, None otherwise
     """
+    if not file.exists():
+        return None
+    if not file.is_file():
+        return None
     with open(file, "r") as f:
         return read_vivy_json(f)

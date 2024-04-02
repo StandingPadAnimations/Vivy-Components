@@ -260,10 +260,10 @@ class VivyData:
     mapping: dict[str, list[VivyMapping]]
 
     def base_to_vivy(self, name: str) -> Optional[VivyMaterial]:
-        """Takes a base material name and retrieves the VivyMaterial 
+        """Takes a base material name and retrieves the VivyMaterial
         associated with the base material.
 
-        This is done by iterating through self.mapping[name] and finding the 
+        This is done by iterating through self.mapping[name] and finding the
         entry with just the base material and no refinements.
 
         name: str
@@ -278,4 +278,4 @@ class VivyData:
         for m in mapping_list:
             if m.refinement is None:
                 return self.materials[m.material]
-        return None 
+        return None
