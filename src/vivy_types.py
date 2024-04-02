@@ -154,6 +154,11 @@ class VIVY_JSON_TOP_LEVEL(TypedDict):
     mapping: dict[str, list[VIVY_JSON_MAPPING]]
 
 
+# TODO: Figure out how to avoid the use of type: ignore
+# in dump_json functions without manually having to write
+# out the dictionary
+
+
 @dataclass
 class VivyPasses:
     """All passes a Vivy material
@@ -177,10 +182,10 @@ class VivyPasses:
         """
         return cast(
             VIVY_JSON_PASSES,
-            {
-                f.name: getattr(self, f.name)
-                for f in fields(self)
-                if getattr(self, f.name) is not None
+            {  # type: ignore
+                f.name: getattr(self, f.name)  # type: ignore
+                for f in fields(self)  # type: ignore
+                if getattr(self, f.name) is not None  # type: ignore
             },
         )
 
@@ -213,10 +218,10 @@ class VivyRefinements:
         """
         return cast(
             VIVY_JSON_REFINE,
-            {
-                f.name: getattr(self, f.name)
-                for f in fields(self)
-                if getattr(self, f.name) is not None
+            {  # type: ignore
+                f.name: getattr(self, f.name)  # type: ignore
+                for f in fields(self)  # type: ignore
+                if getattr(self, f.name) is not None  # type: ignore
             },
         )
 
@@ -300,10 +305,10 @@ class VivyMapping:
         """
         return cast(
             VIVY_JSON_MAPPING,
-            {
-                f.name: getattr(self, f.name)
-                for f in fields(self)
-                if getattr(self, f.name) is not None
+            {  # type: ignore
+                f.name: getattr(self, f.name)  # type: ignore
+                for f in fields(self)  # type: ignore
+                if getattr(self, f.name) is not None  # type: ignore
             },
         )
 
