@@ -149,7 +149,7 @@ def dict_to_vivy_data(raw_dict: vt.VIVY_JSON_TOP_LEVEL) -> vt.VivyData:
     )
 
 
-def read_vivy_json(f: TextIO) -> Optional[vt.VivyData]:
+def load_vivy_json(f: TextIO) -> Optional[vt.VivyData]:
     """Reads a file object and parses the contents.
 
     f: TextIO
@@ -166,7 +166,7 @@ def read_vivy_json(f: TextIO) -> Optional[vt.VivyData]:
         return None
 
 
-def get_vivy_data(file: Path) -> Optional[vt.VivyData]:
+def open_vivy_json(file: Path) -> Optional[vt.VivyData]:
     """Opens a file at the specified path and parses the contents.
 
     file: Path
@@ -180,4 +180,4 @@ def get_vivy_data(file: Path) -> Optional[vt.VivyData]:
     if not file.is_file():
         return None
     with open(file, "r") as f:
-        return read_vivy_json(f)
+        return load_vivy_json(f)
