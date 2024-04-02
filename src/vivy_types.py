@@ -27,7 +27,23 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""This module defines all of the types used in Vivy Components"""
+"""This module defines all of the types used in Vivy Components.
+
+There are 2 groups of types defined here, TypedDicts and dataclasses.
+
+The TypedDicts are here for the purposes of annotating functions in a way
+where Mypy and Pyright don't complain about a simple dictionary. These are
+denoted in all cap as `VIVY_JSON_*`, with documentation on the JSON structures
+they correspond to in the Vivy JSON.
+
+*Note that the JSON structures in the docs only go one level, for the sake of
+conciseness.*
+
+Dataclasses are the Python objects that are developer facing. These are the objects that
+are given when parsing JSON files, and the object that are used to create JSON files. These
+are, like TypedDicts, 1-1 with the JSON structures for the sake of simplicity. These are
+denoted in CamelCase, starting with Vivy.
+"""
 
 from dataclasses import dataclass, fields
 from typing import Optional, TypedDict, cast, NotRequired
