@@ -29,9 +29,9 @@
 
 """This module defines all of the types used in Vivy Components"""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from enum import Enum
-from typing import Optional, TypedDict
+from typing import Optional, TypedDict, cast
 
 # All of these TypedDict classes
 # are used for function annotations
@@ -104,7 +104,7 @@ class VIVY_JSON_MATERIAL(TypedDict):
         "base_material" : "Some material name",
         "desc"          : "Description",
         "passes"        : {...},
-        "refinements    : {...}
+        "refinements"   : {...}
     }
     ```
     """
@@ -179,6 +179,18 @@ class VivyPasses:
     specular: Optional[str]
     normal: Optional[str]
 
+    def dump_json(self) -> VIVY_JSON_PASSES:
+        """Dumps a Vivy JSON structure that would
+        represent this object.
+
+        Note: Dumping is done by iterating over the fields
+        in the class and using a dictionary comprehension
+        to construct a dictionary with little effort.
+
+        Returns: VIVY_JSON_PASSES
+        """
+        return cast(VIVY_JSON_PASSES, {f.name: getattr(self, f.name) for f in fields(self) if getattr(self, f.name) is not None})
+
 
 @dataclass
 class VivyRefinements:
@@ -195,6 +207,18 @@ class VivyRefinements:
     fallback_n: Optional[str]
     fallback_s: Optional[str]
     fallback: Optional[str]
+
+    def dump_json(self) -> VIVY_JSON_REFINE:
+        """Dumps a Vivy JSON structure that would
+        represent this object.
+
+        Note: Dumping is done by iterating over the fields
+        in the class and using a dictionary comprehension
+        to construct a dictionary with little effort.
+
+        Returns: VIVY_JSON_REFINE
+        """
+        return cast(VIVY_JSON_REFINE, {f.name: getattr(self, f.name) for f in fields(self) if getattr(self, f.name) is not None})
 
 
 @dataclass
@@ -222,6 +246,26 @@ class VivyMaterial:
     passes: VivyPasses
     refinements: Optional[VivyRefinements]
 
+    def dump_json(self) -> VIVY_JSON_MATERIAL:
+        """Dumps a Vivy JSON structure that would
+        represent this object.
+
+        Note: Dumping is done by iterating over the fields
+        in the class and using a dictionary comprehension
+        to construct a dictionary with little effort.
+
+        Returns: VIVY_JSON_MATERIAL
+        """
+
+        # To satisfy static analysis, we pretend the dictionary 
+        data: VIVY_JSON_MATERIAL = cast(VIVY_JSON_MATERIAL, {
+            "base_material" : self.base_material,
+            "desc" : self.desc,
+            "passes" : self.passes.dump_json()
+        })
+        if self.refinements is not None:
+            data["refinements"] = self.refinements.dump_json()
+        return data
 
 @dataclass
 class VivyMapping:
@@ -239,6 +283,18 @@ class VivyMapping:
 
     material: str
     refinement: Optional[str]
+
+    def dump_json(self) -> VIVY_JSON_MAPPING:
+        """Dumps a Vivy JSON structure that would
+        represent this object.
+
+        Note: Dumping is done by iterating over the fields
+        in the class and using a dictionary comprehension
+        to construct a dictionary with little effort.
+
+        Returns: VIVY_JSON_PASSES
+        """
+        return cast(VIVY_JSON_MAPPING, {f.name: getattr(self, f.name) for f in fields(self) if getattr(self, f.name) is not None})
 
 
 @dataclass
@@ -258,6 +314,25 @@ class VivyData:
 
     materials: dict[str, VivyMaterial]
     mapping: dict[str, list[VivyMapping]]
+
+    def dump_json(self) -> VIVY_JSON_TOP_LEVEL:
+        """Dumps the data as a Vivy JSON structure.
+
+        Returns: VIVY_JSON_TOP_LEVEL
+        """
+        data: VIVY_JSON_TOP_LEVEL = {
+            "materials" : {},
+            "mapping": {}
+        }
+
+        for mat in self.materials:
+            data["materials"][mat] = self.materials[mat].dump_json()
+
+        for map in self.mapping:
+            data["mapping"][map] = [item.dump_json() for item in self.mapping[map]]
+
+        return data
+       
 
     def base_to_vivy(self, name: str) -> Optional[VivyMaterial]:
         """Takes a base material name and retrieves the VivyMaterial
