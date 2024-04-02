@@ -30,7 +30,6 @@
 """This module defines all of the types used in Vivy Components"""
 
 from dataclasses import dataclass, fields
-from enum import Enum
 from typing import Optional, TypedDict, cast, NotRequired
 
 # All of these TypedDict classes
@@ -153,16 +152,6 @@ class VIVY_JSON_TOP_LEVEL(TypedDict):
 
     materials: dict[str, VIVY_JSON_MATERIAL]
     mapping: dict[str, list[VIVY_JSON_MAPPING]]
-
-
-class Fallback(Enum):
-    """
-    Fallback strings in Vivy
-    """
-
-    FALLBACK_S = "fallback_s"
-    FALLBACK_N = "fallback_n"
-    FALLBACK = "fallback"
 
 
 @dataclass
